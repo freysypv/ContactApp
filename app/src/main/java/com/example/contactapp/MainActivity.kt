@@ -4,16 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.contactapp.data.Contact
+import com.example.contactapp.ui.screens.ContactDetailScreen
 import com.example.contactapp.ui.screens.ContactListScreen
 import com.example.contactapp.ui.theme.ContactAppTheme
 import com.example.contactapp.viewModels.ContactViewModel
@@ -24,14 +19,32 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewModel: ContactViewModel = viewModel()
+            val selectedContact = remember { mutableStateOf<Contact?>(null) }
             ContactAppTheme {
-                MaterialTheme{
+                if (selectedContact.value == null) {
                     ContactListScreen(
-                    viewModel = viewModel,
-                     onContactClick = { })
+                        viewModel = viewModel,
+                        onContactClick = {
+                            contact -> selectedContact.value = contact
+                        }
+                    )
 
-
+                }// end of if statement( selected contact is null)
+                else {
+                    ContactDetailScreen(
+                        contactId = selectedContact.value!!.id,
+                        viewModel = viewModel,
+                        onBackClick = {
+                            selectedContact.value = null }
+                    )
                 }
+//                MaterialTheme{
+//                    ContactListScreen(
+//                    viewModel = viewModel,
+//                     onContactClick = { })
+//
+//
+//                }
             }
         }
     }
